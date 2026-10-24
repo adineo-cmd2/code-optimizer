@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiPost } from '../lib/apiClient';
+const BASE = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
 
 // Textarea-first editor. CodeMirror 6 is attempted only as a progressive
 // enhancement: if @codemirror/* packages are installed cleanly the editor
@@ -73,7 +74,7 @@ export default function CodeEditor() {
           JSON.stringify(res.hotspots ?? []),
         );
       } catch { /* storage optional */ }
-      window.location.href = `/analysis?sid=${res.session_id}`;
+      window.location.href = `${BASE}/analysis?sid=${res.session_id}`;
     } catch (e2) {
       setErr(e2 instanceof Error ? e2.message : 'Submit failed.');
     } finally {

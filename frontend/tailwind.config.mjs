@@ -4,17 +4,31 @@ export default {
   theme: {
     extend: {
       colors: {
-        editordark: '#0d1117',
-        editorpanel: '#161b22',
-        editoredge: '#30363d',
-        optgreen: '#3fb950',
-        optamber: '#d29922',
-        optred: '#f85149',
-        inksoft: '#8b949e',
-      },
+        "editordark": "#0d1117",
+        "editorpanel": "#161b22",
+        "editoredge": "#2b323b",
+        "optgreen": "#3fb950",
+        "optamber": "#d29922",
+        "optred": "#f85149",
+        "inksoft": "#93a1ad"
+},
       fontFamily: {
-        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
-      },
+        "display": [
+                "'Space Grotesk'",
+                "system-ui",
+                "sans-serif"
+        ],
+        "body": [
+                "'JetBrains Mono'",
+                "ui-monospace",
+                "monospace"
+        ],
+        "mono": [
+                "'JetBrains Mono'",
+                "ui-monospace",
+                "monospace"
+        ]
+},
     },
   },
   plugins: [],

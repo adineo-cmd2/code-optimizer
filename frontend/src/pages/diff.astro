@@ -7,21 +7,23 @@ const rawVariant = (Astro.url.searchParams.get("variant") ?? "balanced").trim();
 const allowed = ["speed", "memory", "balanced"];
 const variant = allowed.includes(rawVariant) ? rawVariant : "balanced";
 const validSid = Number.isFinite(sid) && sid > 0;
+
+const base = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
 ---
 <BaseLayout title="Diff — Code Optimizer">
-<h1 class="mb-2 text-2xl font-bold">Diff</h1>
+<h1 class="page-title">Diff</h1>
 {validSid ? (
   <>
     <div class="mb-3 flex flex-wrap gap-2 text-xs">
       {allowed.map((k) => (
         <a
-          href={`/diff?sid=${sid}&variant=${k}`}
+          href={`${base}/diff?sid=${sid}&variant=${k}`}
           class={k === variant
             ? "border border-optgreen bg-optgreen/10 px-3 py-0.5 text-optgreen"
             : "border border-editoredge px-3 py-0.5 text-zinc-400"}
         >{k}</a>
       ))}
-      <a href={`/analysis?sid=${sid}`} class="border border-editoredge px-3 py-0.5 text-zinc-400">← analysis</a>
+      <a href={`${base}/analysis?sid=${sid}`} class="border border-editoredge px-3 py-0.5 text-zinc-400">← analysis</a>
     </div>
     <DiffViewer client:visible sessionId={sid} variant={variant} />
   </>
