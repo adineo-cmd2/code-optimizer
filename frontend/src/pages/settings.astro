@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Settings — Code Optimizer">
+<h1 class="mb-4 text-2xl font-bold">Settings</h1>
+<div class="space-y-4">
+  <div class="border border-editoredge bg-editorpanel p-4">
+    <h2 class="text-sm font-bold text-optgreen">Backend</h2>
+    <p class="mt-1 text-xs text-inksoft">API base: <span id="base">…</span></p>
+  </div>
+</div>
+<script>
+  import { BASE } from '../lib/apiClient';
+  const base = document.getElementById('base')!;
+  base.textContent = BASE;
+</script>
+</BaseLayout>

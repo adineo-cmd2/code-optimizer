@@ -1,0 +1,9 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CodeEditor from "../components/CodeEditor.tsx";
+---
+<BaseLayout title="Submit — Code Optimizer">
+<h1 class="mb-4 text-2xl font-bold">Submit code</h1>
+<CodeEditor client:load />
+<p class="mt-3 text-xs text-inksoft">Static analysis only — code is never executed.</p>
+</BaseLayout>

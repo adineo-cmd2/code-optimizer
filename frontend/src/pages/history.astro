@@ -1,0 +1,38 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="History — Code Optimizer">
+<h1 class="mb-4 text-2xl font-bold">History</h1>
+<div class="border border-editoredge bg-editorpanel p-4">
+  <ul id="list" class="space-y-2 text-sm"><li class="text-inksoft">Loading…</li></ul>
+  <p id="err" class="mt-2 text-sm text-optred"></p>
+</div>
+<script>
+  import { apiGet } from '../lib/apiClient';
+  async function load() {
+    const list = document.getElementById('list')!;
+    const err = document.getElementById('err')!;
+    try {
+      const items = await apiGet('/api/optimize/history');
+      list.innerHTML = '';
+      if (!items.length) list.innerHTML = '<li class="text-inksoft">No sessions yet.</li>';
+      for (const s of items) {
+        const li = document.createElement('li');
+        li.className = 'flex flex-wrap items-center justify-between gap-2 border border-editoredge bg-editordark px-3 py-2';
+        const span = document.createElement('span');
+        const n = s.bottlenecks ?? s.count ?? 0;
+        span.textContent = `#${s.id} ${s.language ?? ''} · ${n} bottlenecks · ${s.created ?? ''}`;
+        const a = document.createElement('a');
+        a.href = `/analysis?sid=${s.id}`;
+        a.textContent = 'Open';
+        a.className = 'border border-optgreen px-2 py-0.5 text-optgreen';
+        li.append(span, a);
+        list.appendChild(li);
+      }
+    } catch (e) {
+      err.textContent = e instanceof Error ? e.message : 'Load failed. Sign in via Settings first.';
+    }
+  }
+  load();
+</script>
+</BaseLayout>
