@@ -1,8 +1,29 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import AnalysisView from "../components/AnalysisView.tsx";
+
+const base = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
 ---
 <BaseLayout title="Analysis — Code Optimizer">
-<h1 class="page-title">Analysis</h1>
-<AnalysisView client:load />
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Report / analysis</p>
+    <h1 class="page-title">Analysis</h1>
+  </div>
+  <div class="page-meta">
+    <span>mode <strong>static</strong></span>
+    <span>source <strong>session report</strong></span>
+    <span><a href={`${base}/submit`}>new run →</a></span>
+  </div>
+</div>
+
+<div class="report-shell">
+  <div class="sheet-head">
+    <strong>Report body / session</strong>
+    <span>hot paths · variants · tradeoff</span>
+  </div>
+  <div class="report-body">
+    <AnalysisView client:load />
+  </div>
+</div>
 </BaseLayout>

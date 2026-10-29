@@ -1,9 +1,53 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CodeEditor from "../components/CodeEditor.tsx";
+
+const base = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
 ---
-<BaseLayout title="Submit — Code Optimizer">
-<h1 class="page-title">Submit code</h1>
-<CodeEditor client:load />
-<p class="mt-3 text-xs text-inksoft">Static analysis only — code is never executed.</p>
+<BaseLayout title="New run — Code Optimizer">
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Intake / new run</p>
+    <h1 class="page-title">New run</h1>
+  </div>
+  <div class="page-meta">
+    <span>run <strong>new</strong></span>
+    <span>mode <strong>static analysis</strong></span>
+    <span><a href={`${base}/history`}>reopen a run →</a></span>
+  </div>
+</div>
+
+<div class="run-layout">
+  <section class="sheet" aria-label="New run form">
+    <div class="sheet-head">
+      <strong>Run sheet / intake</strong>
+      <span>code is never executed</span>
+    </div>
+    <div class="sheet-body">
+      <CodeEditor client:load />
+      <p class="mt-3 text-xs text-inksoft">Static analysis only — code is never executed.</p>
+    </div>
+  </section>
+
+  <aside class="run-aside" aria-label="Run guidance">
+    <div class="aside-panel">
+      <h2>Before you run</h2>
+      <ul class="aside-list">
+        <li><span class="n">01</span><span><strong>Paste the hot function.</strong>Full files are fine; a single function gives a cleaner read.</span></li>
+        <li><span class="n">02</span><span><strong>Declare the load.</strong>Traffic, data volume and input size set the weights.</span></li>
+        <li><span class="n">03</span><span><strong>Read the caveat.</strong>Predicted milliseconds are estimates, not benchmarks.</span></li>
+      </ul>
+    </div>
+    <div class="aside-panel">
+      <h2>After submit</h2>
+      <p>
+        You land on the session report: ranked hotspots, a call graph, every bottleneck with three variants, the tradeoff dial and a unified diff.
+      </p>
+    </div>
+    <div class="aside-panel">
+      <h2>Already have a run?</h2>
+      <p><a href={`${base}/history`}>Open the run archive</a> and pick up where you left off.</p>
+    </div>
+  </aside>
+</div>
 </BaseLayout>

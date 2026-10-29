@@ -6,13 +6,26 @@ const links: { href: string; label: string }[] = [{"href": "/", "label": "Home"}
 <footer class="footer">
   <div class="footer-grid">
     <div>
-      <a href={base || '/'} class="brand" style="margin-bottom: 0.9rem">
-        <span class="brand-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></span>
-        <span>Code Optimizer</span>
+      <a href={base || '/'} class="brand footer-brand">
+        <span class="brand-mark">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="6.5" />
+            <path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4" />
+            <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" />
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-name">Code Optimizer</span>
+          <span class="brand-sub">measurement lab</span>
+        </span>
       </a>
-      <p class="text-sm leading-relaxed" style="color: var(--ink-soft); max-width: 34rem">
+      <p class="footer-note">
         Static analysis only — submitted code is never executed. Variants are suggestions; review before use. Predicted times are load-aware heuristic estimates, not measured profiles.
       </p>
+      <span class="footer-status">
+        <span class="status-dot" aria-hidden="true"></span>
+        profiler ready · run 0042
+      </span>
     </div>
     <div>
       <h4>Explore</h4>
@@ -29,15 +42,15 @@ const links: { href: string; label: string }[] = [{"href": "/", "label": "Home"}
       <ul class="footer-links">
         <li><a href="https://github.com/adineo-cmd2/code-optimizer" target="_blank" rel="noreferrer">Source on GitHub ↗</a></li>
         <li><a href="https://adineo-cmd2.github.io/code-optimizer/" target="_blank" rel="noreferrer">Live site ↗</a></li>
-        <li><span style="font-size: 0.88rem">Local backend · <span class="mono">localhost:8008</span></span></li>
-        <li><span style="font-size: 0.88rem">FastAPI + Astro + React</span></li>
+        <li><span>Local backend · <span class="mono">localhost:8008</span></span></li>
+        <li><span>FastAPI + Astro + React</span></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
     <div class="footer-bottom-inner">
       <span>© {year} Code Optimizer · Aditya Yadav</span>
-      <span>Deployed on GitHub Pages</span>
+      <span>Report format 0042 · deployed on GitHub Pages</span>
     </div>
   </div>
 </footer>

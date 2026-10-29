@@ -83,7 +83,7 @@ export default function CodeEditor() {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-3">
+    <form onSubmit={submit} className="run-form">
       <div ref={cmHost} className={cmUpgraded.current ? '' : 'hidden'} />
       {!cmUpgraded.current && (
         <textarea
@@ -92,7 +92,8 @@ export default function CodeEditor() {
           rows={14}
           spellCheck={false}
           placeholder="Paste code to profile…"
-          className="w-full border border-editoredge bg-editorpanel p-3 font-mono text-sm text-zinc-100"
+          aria-label="Code to profile"
+          className="code-input w-full"
         />
       )}
       {cmUpgraded.current && (
@@ -102,35 +103,35 @@ export default function CodeEditor() {
           rows={4}
           spellCheck={false}
           aria-label="Code fallback"
-          className="w-full border border-editoredge bg-editorpanel p-3 font-mono text-sm text-zinc-100"
+          className="code-fallback w-full"
         />
       )}
-      <div className="grid grid-cols-2 gap-3">
-        <label className="text-sm">Language
+      <div className="grid">
+        <label>Language
           <select value={language} onChange={(e) => setLanguage(e.target.value)}
-            className="mt-1 w-full border border-editoredge bg-editorpanel p-2 text-sm">
+            className="input mt-1">
             <option value="python">python</option>
             <option value="javascript">javascript</option>
           </select>
         </label>
-        <label className="text-sm">Traffic (e.g. 1000 concurrent)
+        <label>Traffic (e.g. 1000 concurrent)
           <input value={traffic} onChange={(e) => setTraffic(e.target.value)}
             placeholder="1000 concurrent"
-            className="mt-1 w-full border border-editoredge bg-editorpanel p-2 text-sm" />
+            className="input mt-1" />
         </label>
-        <label className="text-sm">Data volume (e.g. 1M rows)
+        <label>Data volume (e.g. 1M rows)
           <input value={dataVolume} onChange={(e) => setDataVolume(e.target.value)}
             placeholder="1M rows"
-            className="mt-1 w-full border border-editoredge bg-editorpanel p-2 text-sm" />
+            className="input mt-1" />
         </label>
-        <label className="text-sm">Input size (e.g. n=10000)
+        <label>Input size (e.g. n=10000)
           <input value={inputSize} onChange={(e) => setInputSize(e.target.value)}
             placeholder="n=10000"
-            className="mt-1 w-full border border-editoredge bg-editorpanel p-2 text-sm" />
+            className="input mt-1" />
         </label>
       </div>
-      {err && <p className="text-sm text-optred">{err}</p>}
-      <button disabled={busy} className="bg-optgreen px-4 py-1 text-sm font-bold text-editordark disabled:opacity-50">
+      {err && <p className="error-text" role="alert">{err}</p>}
+      <button type="submit" disabled={busy} className="btn btn-accent run-submit">
         {busy ? 'Profiling…' : 'Profile & optimize'}
       </button>
     </form>

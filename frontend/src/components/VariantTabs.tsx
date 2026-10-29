@@ -19,33 +19,29 @@ export default function VariantTabs({ variants }: { variants: Variant[] }) {
 
   return (
     <div className="mt-2">
-      <div className="flex gap-2">
+      <div className="variant-tabs" role="group" aria-label="Variant selection">
         {KINDS.map((k) => (
           <button
             key={k}
             type="button"
             onClick={() => setTab(k)}
-            className={
-              'border px-3 py-0.5 text-xs ' +
-              (tab === k
-                ? 'border-optgreen bg-optgreen/10 text-optgreen'
-                : 'border-editoredge text-zinc-400')
-            }
+            aria-pressed={tab === k}
+            className={'tab' + (tab === k ? ' active' : '')}
           >
             {k}
           </button>
         ))}
       </div>
       {active ? (
-        <div className="mt-2 border border-editoredge bg-editordark p-3">
-          <pre className="overflow-x-auto whitespace-pre-wrap font-mono text-xs text-zinc-100">{active.code}</pre>
-          <p className="mt-2 text-xs text-inksoft">
+        <div className="variant-body">
+          <pre className="variant-code">{active.code}</pre>
+          <p className="variant-meta">
             complexity {active.complexity} · readability {active.readability}/10
           </p>
-          <p className="mt-1 text-xs text-zinc-300">{active.explanation}</p>
+          <p className="variant-explanation">{active.explanation}</p>
         </div>
       ) : (
-        <p className="mt-2 text-xs text-optamber">No variants for this bottleneck.</p>
+        <p className="warn-text">No variants for this bottleneck.</p>
       )}
     </div>
   );

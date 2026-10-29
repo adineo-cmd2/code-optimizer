@@ -1,123 +1,280 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-
 const base = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
+
+const channels = [
+  {
+    n: '01',
+    name: 'Hot paths',
+    tag: 'static signal',
+    desc: 'Time concentration per function: recursion, repeated work, and loops that grow with the input you declare.',
+    out: ['Ranked hotspots', 'predicted ms · priority'],
+  },
+  {
+    n: '02',
+    name: 'Allocation',
+    tag: 'static signal',
+    desc: 'Object churn, retained collections and copy-heavy loops visible in the source.',
+    out: ['Memory flags', 'streaming rewrite'],
+  },
+  {
+    n: '03',
+    name: 'Query plans',
+    tag: 'load-weighted',
+    desc: 'N+1 access, repeated scans and join shape under the concurrency and data volume you specify.',
+    out: ['Plan notes', 'batched alternative'],
+  },
+  {
+    n: '04',
+    name: 'Diffs',
+    tag: 'review artifact',
+    desc: 'Every proposed rewrite against the submitted source, line for line, with the tradeoff stated.',
+    out: ['Unified diff', 'speed · memory · balanced'],
+  },
+  {
+    n: '05',
+    name: 'History',
+    tag: 'archive',
+    desc: 'Runs, languages, bottleneck counts and timestamps. Nothing is overwritten between sessions.',
+    out: ['Reopen a session', 'compare selections'],
+  },
+];
 ---
 <BaseLayout title="Latency-Aware Code Optimizer" description="Latency-aware code optimizer: submit code plus runtime context, get profiled hotspots, three rewritten variants per bottleneck, a tradeoff dial and a unified diff. Static analysis only.">
+
 <section class="hero">
-  <span class="hero-badge">static analysis · your code never runs</span>
-  <h1 class="display-1">Optimize for the traffic<br/><span class="grad-text">you actually have.</span></h1>
-  <p class="lead">Submit code plus runtime context. Get profiled hotspots, load-aware bottleneck predictions, three rewritten variants per bottleneck — speed / memory / balanced — a tradeoff dial, and a unified diff. Static analysis only: your code is never executed.</p>
-  <div class="hero-ctas">
-<a href={`${base}/submit`} class="btn btn-accent btn-lg">Optimize code</a>
-<a href={`${base}/analysis`} class="btn btn-ghost btn-lg">View an analysis</a>
+  <div class="hero-copy">
+    <p class="eyebrow">Static profiler · load-aware</p>
+    <h1 class="display-1">Optimize for the traffic you <span class="grad-text">actually have.</span></h1>
+    <p class="lead">
+      Most rewrites are argued from taste. This one starts from a run: submit a function and the load it serves, then read a ranked report of hot paths, allocation pressure and query plans — with three proposals and one diff to review.
+    </p>
+    <div class="hero-actions">
+      <a href={`${base}/submit`} class="btn btn-accent btn-lg">Start a new run</a>
+      <a href={`${base}/history`} class="btn btn-ghost btn-lg">Reopen a run</a>
+    </div>
+    <ul class="hero-specs">
+      <li><strong>Static only</strong>your code never executes</li>
+      <li><strong>3 variants</strong>per bottleneck, scored</li>
+      <li><strong>1 unified diff</strong>to review, not auto-merge</li>
+    </ul>
   </div>
-  <div class="hero-meta">
-<span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>Hotspots + call graph</span>
-<span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v18M16 3v18M3 8h5M3 16h5M16 12h5M12 5l4 3-4 3"/></svg>3 variants per bottleneck</span>
-<span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Code is never executed</span>
-  </div>
+
+  <aside class="ledger" aria-label="Example measurement ledger for run 0042">
+    <div class="ledger-head">
+      <span>Latency ledger</span>
+      <strong>Run 0042</strong>
+    </div>
+    <div class="ledger-body">
+      <div class="ledger-meta">
+        <h2>P95 response / ms</h2>
+        <span>24h window · 1,000 concurrent</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Baseline</span>
+        <span class="bar-track"><span class="bar bar-baseline" style="width: 98%"></span></span>
+        <span class="bar-val">412 <small>ms</small></span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Optimized</span>
+        <span class="bar-track"><span class="bar bar-optimized" style="width: 64%"></span></span>
+        <span class="bar-val">268 <small>ms</small></span>
+      </div>
+      <div class="delta-row">
+        <div>
+          <span class="delta-value">−144 ms</span>
+          <span class="delta-caption">P95 delta · baseline → optimized</span>
+        </div>
+        <span class="delta-pct">−35.0%</span>
+      </div>
+      <ul class="ledger-rows">
+        <li><span>p50</span><span class="v">96 <em>→</em> 64 ms</span></li>
+        <li><span>p99</span><span class="v">744 <em>→</em> 498 ms</span></li>
+        <li><span>throughput</span><span class="v">1.42k <em>→</em> 2.05k rps</span></li>
+      </ul>
+    </div>
+    <p class="ledger-foot">n = 1,284,000 requests · load-aware estimate, not a live benchmark.</p>
+  </aside>
 </section>
 
-<section class="section">
-  <div class="grid-3">
-<article class="card card-hover p-5 reveal">
-  <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></div>
-  <h3 class="text-[1.02rem] font-semibold" style="letter-spacing:-0.01em">Profiled hotspots</h3>
-  <p class="mt-2 text-sm leading-relaxed" style="color: var(--ink-soft)">Static analysis finds the hot paths; severity is ranked for you.</p>
-</article>
-<article class="card card-hover p-5 reveal">
-  <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="3"/><circle cx="19" cy="6" r="3"/><circle cx="12" cy="18" r="3"/><path d="M7.5 8 10 15M16.5 8 14 15M8 6h8"/></svg></div>
-  <h3 class="text-[1.02rem] font-semibold" style="letter-spacing:-0.01em">Call graph</h3>
-  <p class="mt-2 text-sm leading-relaxed" style="color: var(--ink-soft)">See the call structure behind each bottleneck.</p>
-</article>
-<article class="card card-hover p-5 reveal">
-  <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
-  <h3 class="text-[1.02rem] font-semibold" style="letter-spacing:-0.01em">Three variants</h3>
-  <p class="mt-2 text-sm leading-relaxed" style="color: var(--ink-soft)">Speed, memory and balanced rewrites per bottleneck — scored, not just shown.</p>
-</article>
-<article class="card card-hover p-5 reveal">
-  <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v18M16 3v18M3 8h5M3 16h5M16 12h5M12 5l4 3-4 3"/></svg></div>
-  <h3 class="text-[1.02rem] font-semibold" style="letter-spacing:-0.01em">Tradeoff dial</h3>
-  <p class="mt-2 text-sm leading-relaxed" style="color: var(--ink-soft)">score = 0.5·speed + 0.3·memory + 0.2·readability — turn the dial, watch the pick change.</p>
-</article>
-<article class="card card-hover p-5 reveal">
-  <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
-  <h3 class="text-[1.02rem] font-semibold" style="letter-spacing:-0.01em">Unified diff</h3>
-  <p class="mt-2 text-sm leading-relaxed" style="color: var(--ink-soft)">Every proposed change, in one reviewable diff.</p>
-</article>
-<article class="card card-hover p-5 reveal">
-  <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-  <h3 class="text-[1.02rem] font-semibold" style="letter-spacing:-0.01em">Honest labels</h3>
-  <p class="mt-2 text-sm leading-relaxed" style="color: var(--ink-soft)">Predicted times are heuristic estimates, labelled as such. No safe transform? It says so.</p>
-</article>
+<section class="section reveal">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">01 / Report channels</p>
+      <h2 class="section-title">Five channels, one run.</h2>
+    </div>
+    <p class="section-note">Signals are read from the code you submit and weighted by the load you declare. No execution, no instrumentation.</p>
+  </div>
+
+  <table class="measure-table">
+    <caption class="sr-only">Channels measured by a Code Optimizer report</caption>
+    <thead>
+      <tr>
+        <th scope="col">No.</th>
+        <th scope="col">Channel</th>
+        <th scope="col">What it reads</th>
+        <th scope="col">What you get</th>
+      </tr>
+    </thead>
+    <tbody>
+      {channels.map((c) => (
+        <tr>
+          <td>{c.n}</td>
+          <td>
+            <span class="m-name">{c.name}</span>
+            <span class="m-tag">{c.tag}</span>
+          </td>
+          <td><span class="m-desc">{c.desc}</span></td>
+          <td>
+            <span class="m-out">
+              <span>{c.out[0]}</span>
+              <span>{c.out[1]}</span>
+            </span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</section>
+
+<section class="section reveal">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">02 / Proposed change</p>
+      <h2 class="section-title">One diff, fully shown.</h2>
+    </div>
+    <p class="section-note">Every report ends with reviewable code, not advice. Additions are cobalt; removals are signal orange.</p>
+  </div>
+
+  <div class="diff-inset">
+    <div class="diff-inset-head">
+      <span><span class="run">DIFF 0042-07</span> <span aria-hidden="true">/</span> speed variant</span>
+      <span class="file">orders.py · score_orders · lines 44–51</span>
+    </div>
+    <div class="diff-inset-body">
+      <pre class="diff-code" aria-label="Example unified diff for score_orders"><span class="dl dl-hunk">@@ orders.py · score_orders · lines 44–51 @@</span>
+<span class="dl dl-ctx">def score_orders(orders, regions):</span>
+<span class="dl dl-del">-    ranked = []</span>
+<span class="dl dl-del">-    for order in orders:</span>
+<span class="dl dl-del">-        score = order.value * regions[order.region]</span>
+<span class="dl dl-del">-        ranked.append((score, order.id))</span>
+<span class="dl dl-del">-    ranked.sort(reverse=True)</span>
+<span class="dl dl-del">-    return ranked[:20]</span>
+<span class="dl dl-add">+    return sorted(</span>
+<span class="dl dl-add">+        ((o.value * regions[o.region], o.id) for o in orders),</span>
+<span class="dl dl-add">+        reverse=True,</span>
+<span class="dl dl-add">+    )[:20]</span></pre>
+      <div class="diff-notes">
+        <div>
+          <span class="diff-note-k">P95 delta</span>
+          <span class="diff-note-v signal">−144 ms</span>
+        </div>
+        <div class="diff-note-sep"></div>
+        <div>
+          <span class="diff-note-k">Allocation</span>
+          <span class="diff-note-v">−38%</span>
+        </div>
+        <div class="diff-note-sep"></div>
+        <div>
+          <span class="diff-note-k">Complexity</span>
+          <span class="diff-note-v">O(n log n)</span>
+        </div>
+        <div class="diff-note-sep"></div>
+        <div>
+          <span class="diff-note-k">Readability</span>
+          <span class="diff-note-v">8 → 9</span>
+        </div>
+        <p class="diff-note-copy">Sort is preserved. The intermediate list and Python-level loop are removed; the generator keeps memory flat.</p>
+      </div>
+    </div>
+    <div class="diff-inset-foot">
+      <span>Variant: speed · predicted, not benchmarked</span>
+      <span>−9 lines / +5 lines · review before merge</span>
+    </div>
   </div>
 </section>
 
 <section class="section reveal">
   <div class="section-head">
-    <p class="eyebrow">Showcase</p>
-    <h2 class="section-title">The tradeoff dial</h2>
-    <p class="lead">How the three variants are scored and picked.</p>
+    <div>
+      <p class="eyebrow">03 / Priority control</p>
+      <h2 class="section-title">A dial, not a guess.</h2>
+    </div>
+    <p class="section-note">Set what matters for this service. The report re-picks the winning variant; ties fall back to balanced.</p>
   </div>
 
-<div class="grid gap-3 sm:grid-cols-3" style="max-width: 50rem; margin: 0 auto">
-  <div class="card card-hover p-4 text-center" style="border-color: var(--accent)">
-    <p class="eyebrow">speed</p>
-    <p class="mono mt-2 text-lg font-semibold" style="color: var(--accent)">10 / 3 / 4</p>
-    <p class="mt-2 text-xs leading-relaxed" style="color: var(--ink-soft)">list comprehensions, map, set precompute</p>
-  </div>
-  <div class="card card-hover p-4 text-center" style="border-color: #d29922">
-    <p class="eyebrow" style="color:#d29922">memory</p>
-    <p class="mono mt-2 text-lg font-semibold" style="color: #d29922">3 / 10 / 6</p>
-    <p class="mt-2 text-xs leading-relaxed" style="color: var(--ink-soft)">generators, streaming, lazy joins</p>
-  </div>
-  <div class="card card-hover p-4 text-center">
-    <p class="eyebrow" style="color: var(--ink-soft)">balanced</p>
-    <p class="mono mt-2 text-lg font-semibold">7 / 7 / 8</p>
-    <p class="mt-2 text-xs leading-relaxed" style="color: var(--ink-soft)">commented, readable transforms</p>
-  </div>
-</div>
-
-</section>
-
-<section class="section">
-  <div class="section-head">
-    <p class="eyebrow">How it works</p>
-    <h2 class="section-title">Three steps, no fluff</h2>
-  </div>
-  <div class="grid-3">
-<div class="step reveal">
-  <div class="step-num">01</div>
-  <h3 class="mt-2 text-[1rem] font-semibold">Submit code + context</h3>
-  <p class="mt-1.5 text-sm leading-relaxed" style="color: var(--ink-soft)">Traffic, data volume, input size — the load the code actually sees.</p>
-</div>
-<div class="step reveal">
-  <div class="step-num">02</div>
-  <h3 class="mt-2 text-[1rem] font-semibold">Read the analysis</h3>
-  <p class="mt-1.5 text-sm leading-relaxed" style="color: var(--ink-soft)">Hotspot severities, the call graph, load-aware predictions.</p>
-</div>
-<div class="step reveal">
-  <div class="step-num">03</div>
-  <h3 class="mt-2 text-[1rem] font-semibold">Compare & diff</h3>
-  <p class="mt-1.5 text-sm leading-relaxed" style="color: var(--ink-soft)">Speed / memory / balanced variants, the dial, and the unified diff.</p>
-</div>
+  <div class="bench">
+    <div class="bench-head">
+      <span>Score bench / variant selection</span>
+      <strong>Example weighting</strong>
+    </div>
+    <div class="bench-body">
+      <div class="bench-copy">
+        <h3>The score is explicit.</h3>
+        <p>
+          Three weights, one sum. Move emphasis toward speed or memory and the same three proposals are re-ranked — no hidden preference for the cleverest diff.
+        </p>
+        <div class="formula">
+          score = <span class="w-speed">0.50·speed</span> + <span class="w-memory">0.30·memory</span> + <span class="w-read">0.20·readability</span>
+        </div>
+      </div>
+      <div class="bench-dials">
+        <div class="dial-row">
+          <span class="dial-name">speed</span>
+          <span class="dial-track"><span class="dial-fill" style="width: 50%"></span></span>
+          <span class="dial-weight">0.50</span>
+        </div>
+        <div class="dial-row">
+          <span class="dial-name">memory</span>
+          <span class="dial-track"><span class="dial-fill" style="width: 30%"></span></span>
+          <span class="dial-weight">0.30</span>
+        </div>
+        <div class="dial-row">
+          <span class="dial-name">readability</span>
+          <span class="dial-track"><span class="dial-fill" style="width: 20%"></span></span>
+          <span class="dial-weight">0.20</span>
+        </div>
+        <div class="bench-result">
+          <span>Selected variant</span>
+          <strong class="picked">balanced</strong>
+        </div>
+        <p class="bench-foot">Weights are normalised to 1.00. Ties resolve to balanced, the least surprising rewrite.</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <section class="section reveal">
   <div class="note-band">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    <p>Static analysis only — submitted code is never executed. Variants are suggestions; review before use.</p>
+    <div>
+      <span class="eyebrow">Limits / 04</span>
+    </div>
+    <div>
+      <h3>Predictions, not promises.</h3>
+      <p>
+        The report is static. It does not execute, instrument or benchmark your code. Treat the delta as a ranked hypothesis, then verify it against your own traces before shipping.
+      </p>
+    </div>
+    <ul class="note-list">
+      <li><strong>Predicted times</strong> are load-aware estimates and labelled as such.</li>
+      <li><strong>No safe transform?</strong> The report says so instead of inventing one.</li>
+      <li><strong>Every variant</strong> is a proposal. Nothing is merged or deployed.</li>
+    </ul>
   </div>
 </section>
 
-<section class="section">
-  <div class="cta-band reveal">
-    <h2 class="section-title">Where is your code slow?</h2>
-    <p class="lead" style="margin: 0.8rem auto 1.8rem">Paste it in with the traffic it serves, and get three ways forward.</p>
-    <a href={`${base}/submit`} class="btn btn-accent btn-lg">Optimize code</a>
+<section class="section reveal">
+  <div class="cta-band">
+    <div>
+      <p class="eyebrow">Next run</p>
+      <h2 class="section-title">Start with the function that hurts.</h2>
+      <p>One submission gives you the ranked list, the rewrites and the diff. Paste the code, declare the traffic, read the report.</p>
+    </div>
+    <div class="cta-actions">
+      <a href={`${base}/submit`} class="btn btn-accent btn-lg">New run</a>
+      <a href={`${base}/history`} class="btn btn-ghost btn-lg">Reopen a run</a>
+    </div>
   </div>
 </section>
 

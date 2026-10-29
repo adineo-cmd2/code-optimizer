@@ -11,23 +11,75 @@ const validSid = Number.isFinite(sid) && sid > 0;
 const base = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
 ---
 <BaseLayout title="Diff — Code Optimizer">
-<h1 class="page-title">Diff</h1>
-{validSid ? (
-  <>
-    <div class="mb-3 flex flex-wrap gap-2 text-xs">
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Report / diff</p>
+    <h1 class="page-title">Diff</h1>
+  </div>
+  <div class="page-meta">
+    <span>mode <strong>static</strong></span>
+    <span>review <strong>before merge</strong></span>
+  </div>
+</div>
+
+<div id="diff-state" data-base={base}>
+  <div id="diff-missing" class="note-band" hidden={validSid}>
+    <div><span class="eyebrow">Missing input</span></div>
+    <div>
+      <h3>Missing <span class="mono">?sid=.</span></h3>
+      <p>Open an analysis first, then follow its diff link (e.g. /diff?sid=1&amp;variant=balanced).</p>
+    </div>
+    <ul class="note-list">
+      <li><a href={`${base}/submit`}>Start a new run →</a></li>
+      <li><a href={`${base}/history`}>Reopen an existing run →</a></li>
+    </ul>
+  </div>
+
+  <div id="diff-ready" hidden={!validSid}>
+    <div class="diff-toolbar" id="diff-toolbar" aria-label="Diff variant">
       {allowed.map((k) => (
         <a
-          href={`${base}/diff?sid=${sid}&variant=${k}`}
-          class={k === variant
-            ? "border border-optgreen bg-optgreen/10 px-3 py-0.5 text-optgreen"
-            : "border border-editoredge px-3 py-0.5 text-zinc-400"}
+          href={`${base}/diff?sid=${validSid ? sid : 0}&variant=${k}`}
+          data-variant={k}
+          class:list={["tab", { active: k === variant }]}
         >{k}</a>
       ))}
-      <a href={`${base}/analysis?sid=${sid}`} class="border border-editoredge px-3 py-0.5 text-zinc-400">← analysis</a>
+      <a href={`${base}/analysis?sid=${validSid ? sid : 0}`} class="back-link" data-back>← analysis</a>
     </div>
-    <DiffViewer client:visible sessionId={sid} variant={variant} />
-  </>
-) : (
-  <p class="text-sm text-optamber">Missing ?sid=. Open an analysis first, then follow its diff link (e.g. /diff?sid=1&amp;variant=balanced).</p>
-)}
+    <div class="report-shell">
+      <div class="sheet-head">
+        <strong>Unified diff / session</strong>
+        <span>static proposal · review before merge</span>
+      </div>
+      <div class="report-body">
+        <DiffViewer client:visible sessionId={validSid ? sid : 0} variant={variant} />
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const state = document.getElementById('diff-state');
+  const missing = document.getElementById('diff-missing');
+  const ready = document.getElementById('diff-ready');
+  if (state && missing && ready) {
+    const base = state.dataset.base ?? '';
+    const params = new URLSearchParams(window.location.search);
+    const sid = Number(params.get('sid'));
+    const isReady = Number.isFinite(sid) && sid > 0;
+    missing.hidden = isReady;
+    ready.hidden = !isReady;
+    if (isReady) {
+      const raw = (params.get('variant') ?? 'balanced').trim();
+      const variant = ['speed', 'memory', 'balanced'].includes(raw) ? raw : 'balanced';
+      const back = ready.querySelector<HTMLAnchorElement>('[data-back]');
+      if (back) back.href = `${base}/analysis?sid=${sid}`;
+      ready.querySelectorAll<HTMLAnchorElement>('[data-variant]').forEach((link) => {
+        const kind = link.dataset.variant ?? 'balanced';
+        link.href = `${base}/diff?sid=${sid}&variant=${kind}`;
+        link.classList.toggle('active', kind === variant);
+      });
+    }
+  }
+</script>
 </BaseLayout>

@@ -1,13 +1,51 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const base = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
 ---
 <BaseLayout title="Settings — Code Optimizer">
-<h1 class="page-title">Settings</h1>
-<div class="space-y-4">
-  <div class="border border-editoredge bg-editorpanel p-4">
-    <h2 class="text-sm font-bold text-optgreen">Backend</h2>
-    <p class="mt-1 text-xs text-inksoft">API base: <span id="base">…</span></p>
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Lab / settings</p>
+    <h1 class="page-title">Settings</h1>
   </div>
+  <div class="page-meta">
+    <span>build <strong>static frontend</strong></span>
+    <span><a href={`${base}/submit`}>new run →</a></span>
+  </div>
+</div>
+
+<div class="run-layout">
+  <section class="sheet" aria-label="Backend settings">
+    <div class="sheet-head">
+      <strong>Environment / backend</strong>
+      <span>read only</span>
+    </div>
+    <div class="sheet-body">
+      <h2 class="panel-title">Backend</h2>
+      <p class="muted">API base: <span id="base" class="mono">…</span></p>
+      <ul class="note-list" style="margin-top: 0.9rem">
+        <li><strong>Runtime</strong> · FastAPI + Astro + React</li>
+        <li><strong>Mode</strong> · static analysis, code never executed</li>
+        <li><strong>Local service</strong> · <span class="mono">localhost:8008</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <aside class="run-aside" aria-label="Settings notes">
+    <div class="aside-panel">
+      <h2>What lives here</h2>
+      <p>
+        This page reports the backend the frontend will call. It does not store credentials in the browser and it does not change the analysis contract.
+      </p>
+    </div>
+    <div class="aside-panel">
+      <h2>Offline?</h2>
+      <p>
+        Start the local backend before submitting a run. If a report fails to load, confirm the API base above and try again.
+      </p>
+    </div>
+  </aside>
 </div>
 <script>
   import { BASE } from '../lib/apiClient';

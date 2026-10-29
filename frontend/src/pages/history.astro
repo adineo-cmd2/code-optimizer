@@ -1,31 +1,67 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const base = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
 ---
 <BaseLayout title="History — Code Optimizer">
-<h1 class="page-title">History</h1>
-<div class="border border-editoredge bg-editorpanel p-4">
-  <ul id="list" class="space-y-2 text-sm"><li class="text-inksoft">Loading…</li></ul>
-  <p id="err" class="mt-2 text-sm text-optred"></p>
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Archive / history</p>
+    <h1 class="page-title">Reopen a run</h1>
+  </div>
+  <div class="page-meta">
+    <span>source <strong>session archive</strong></span>
+    <span><a href={`${base}/submit`}>new run →</a></span>
+  </div>
+</div>
+
+<div class="run-layout">
+  <section class="sheet" aria-label="Run history">
+    <div class="sheet-head">
+      <strong>Run archive / reopen a run</strong>
+      <span>newest first</span>
+    </div>
+    <div class="sheet-body">
+      <ul id="list" class="history-list" data-base={base}><li class="history-empty">Loading…</li></ul>
+      <p id="err" class="history-error"></p>
+    </div>
+  </section>
+
+  <aside class="run-aside" aria-label="Archive notes">
+    <div class="aside-panel">
+      <h2>Reading the archive</h2>
+      <p>
+        Each row is one submitted run. Open a session to see its ranked hotspots, variants and tradeoff dial. The archive is read-only; runs are never edited in place.
+      </p>
+    </div>
+    <div class="aside-panel">
+      <h2>Nothing to show?</h2>
+      <p>
+        If the list is empty, start a run from the intake form. If loading fails, the local backend may be offline — the API base is shown in Settings.
+      </p>
+    </div>
+  </aside>
 </div>
 <script>
   import { apiGet } from '../lib/apiClient';
   async function load() {
     const list = document.getElementById('list')!;
     const err = document.getElementById('err')!;
+    const base = list.dataset.base ?? '';
     try {
       const items = await apiGet('/api/optimize/history');
       list.innerHTML = '';
-      if (!items.length) list.innerHTML = '<li class="text-inksoft">No sessions yet.</li>';
+      if (!items.length) list.innerHTML = '<li class="history-empty">No sessions yet.</li>';
       for (const s of items) {
         const li = document.createElement('li');
-        li.className = 'flex flex-wrap items-center justify-between gap-2 border border-editoredge bg-editordark px-3 py-2';
+        li.className = 'history-row';
         const span = document.createElement('span');
         const n = s.bottlenecks ?? s.count ?? 0;
         span.textContent = `#${s.id} ${s.language ?? ''} · ${n} bottlenecks · ${s.created ?? ''}`;
         const a = document.createElement('a');
-        a.href = `/analysis?sid=${s.id}`;
+        a.href = `${base}/analysis?sid=${s.id}`;
         a.textContent = 'Open';
-        a.className = 'border border-optgreen px-2 py-0.5 text-optgreen';
+        a.className = 'history-open';
         li.append(span, a);
         list.appendChild(li);
       }

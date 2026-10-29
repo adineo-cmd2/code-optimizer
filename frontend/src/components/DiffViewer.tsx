@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { apiGet } from '../lib/apiClient';
 
 function lineClass(line: string): string {
-  if (line.startsWith('+') && !line.startsWith('+++')) return 'bg-optgreen/10 text-optgreen';
-  if (line.startsWith('-') && !line.startsWith('---')) return 'bg-optred/10 text-optred';
-  if (line.startsWith('@@')) return 'text-optamber';
-  return 'text-zinc-300';
+  if (line.startsWith('+') && !line.startsWith('+++')) return 'diff-add';
+  if (line.startsWith('-') && !line.startsWith('---')) return 'diff-del';
+  if (line.startsWith('@@')) return 'diff-hunk';
+  return 'diff-ctx';
 }
 
 export default function DiffViewer({ sessionId, variant }: { sessionId: number; variant: string }) {
@@ -17,8 +17,18 @@ export default function DiffViewer({ sessionId, variant }: { sessionId: number; 
     (async () => {
       try {
         const allowed = ['speed', 'memory', 'balanced'];
-        const v = allowed.includes(variant) ? variant : 'balanced';
-        const res = await apiGet(`/api/optimize/${sessionId}/diff?variant=${v}`);
+        // The route is statically built, so query values are resolved again on
+        // the client. Server-provided props win when a real session id exists.
+        const params = new URLSearchParams(window.location.search);
+        const querySid = Number(params.get('sid'));
+        const effectiveId = sessionId > 0 ? sessionId : querySid;
+        const rawVariant = sessionId > 0 ? variant : (params.get('variant') ?? variant);
+        const v = allowed.includes(rawVariant) ? rawVariant : 'balanced';
+        if (!Number.isFinite(effectiveId) || effectiveId <= 0) {
+          if (live) setErr('Missing ?sid=. Open an analysis first, then follow its diff link.');
+          return;
+        }
+        const res = await apiGet(`/api/optimize/${effectiveId}/diff?variant=${v}`);
         if (live) setDiff(res.diff ?? '');
       } catch (e) {
         if (live) setErr(e instanceof Error ? e.message : 'Diff load failed.');
@@ -27,13 +37,13 @@ export default function DiffViewer({ sessionId, variant }: { sessionId: number; 
     return () => { live = false; };
   }, [sessionId, variant]);
 
-  if (err) return <p className="text-sm text-optred">{err}</p>;
-  if (diff == null) return <p className="text-sm text-inksoft">Loading diff…</p>;
-  if (!diff.trim()) return <p className="text-sm text-inksoft">No differences — variant matches the original.</p>;
+  if (err) return <p className="error-text">{err}</p>;
+  if (diff == null) return <p className="muted">Loading diff…</p>;
+  if (!diff.trim()) return <p className="muted">No differences — variant matches the original.</p>;
   return (
-    <pre className="overflow-x-auto border border-editoredge bg-editorpanel p-3 font-mono text-xs leading-5">
+    <pre className="diff-view" aria-label="Unified diff">
       {diff.split('\n').map((line, i) => (
-        <div key={i} className={lineClass(line)}>{line || ' '}</div>
+        <span key={i} className={`diff-line ${lineClass(line)}`}>{line || ' '}</span>
       ))}
     </pre>
   );

@@ -10,33 +10,51 @@ const isActive = (href: string) => {
 ---
 <header class="nav">
   <div class="nav-inner">
-    <a href={base || '/'} class="brand">
-      <span class="brand-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></span>
-      <span>Code Optimizer</span>
+    <a href={base || '/'} class="brand" aria-label="Code Optimizer home">
+      <span class="brand-mark">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="6.5" />
+          <path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4" />
+          <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" />
+        </svg>
+      </span>
+      <span class="brand-text">
+        <span class="brand-name">Code Optimizer</span>
+        <span class="brand-sub">measurement lab</span>
+      </span>
     </a>
-    <button id="nav-toggle" class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <path d="M4 7h16M4 12h16M4 17h16" />
-      </svg>
-    </button>
-    <nav id="nav-menu" class="nav-menu" aria-label="Main">
-      <ul>
-        {links.map((l) => (
-          <li>
-            <a
-              href={l.href === '/' ? base || '/' : `${base}${l.href}`}
-              data-navlink={l.href}
-              class:list={['nav-link', { active: isActive(l.href) }]}
-            >
-              {l.label}
-            </a>
+
+    <div class="nav-right">
+      <span class="nav-status" aria-label="Profiler status">
+        <span class="status-dot" aria-hidden="true"></span>
+        profiler ready
+      </span>
+
+      <button id="nav-toggle" class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+
+      <nav id="nav-menu" class="nav-menu" aria-label="Main">
+        <ul>
+          {links.map((l) => (
+            <li>
+              <a
+                href={l.href === '/' ? base || '/' : `${base}${l.href}`}
+                data-navlink={l.href}
+                class:list={['nav-link', { active: isActive(l.href) }]}
+              >
+                {l.label}
+              </a>
+            </li>
+          ))}
+          <li class="nav-cta-item">
+            <a href={`${base}/submit`} class="nav-link nav-cta">Optimize code</a>
           </li>
-        ))}
-        <li class="hidden md:ml-2 md:inline-flex">
-          <a href={`${base}/submit`} class="nav-link nav-cta">Optimize code</a>
-        </li>
-      </ul>
-    </nav>
+        </ul>
+      </nav>
+    </div>
   </div>
 </header>
 
@@ -44,9 +62,20 @@ const isActive = (href: string) => {
   const toggle = document.getElementById('nav-toggle');
   const menu = document.getElementById('nav-menu');
   if (toggle && menu) {
+    const close = () => {
+      menu.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    };
     toggle.addEventListener('click', () => {
       const open = menu.classList.toggle('open');
       toggle.setAttribute('aria-expanded', String(open));
+    });
+    menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close();
+    });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 930) close();
     });
   }
 </script>

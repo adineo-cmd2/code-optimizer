@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { apiPost } from '../lib/apiClient';
 
+const BASE = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
+
 // Stateless tradeoff dial. The backend apply endpoint is stateless: it maps
 // the three 0-10 weights to a single kind (speed|memory|balanced). The diff
 // page selects ONLY via ?variant=, so we surface an explicit link carrying
@@ -33,7 +35,7 @@ export default function TradeoffDial({ sessionId }: { sessionId: number }) {
 
   function slider(label: string, v: number, set: (n: number) => void) {
     return (
-      <label className="block text-xs">{label}: {v}
+      <label className="slider-row">{label}: {v}
         <input type="range" min={0} max={10} value={v}
           onChange={(e) => set(Number(e.target.value))}
           className="w-full" />
@@ -42,22 +44,21 @@ export default function TradeoffDial({ sessionId }: { sessionId: number }) {
   }
 
   return (
-    <div className="border border-editoredge bg-editorpanel p-4">
-      <h3 className="text-sm font-bold text-optgreen">Tradeoff dial</h3>
-      <div className="mt-2 space-y-2">
+    <div className="dial-panel">
+      <h3 className="panel-title">Tradeoff dial</h3>
+      <div className="slider-stack">
         {slider('speed', speed, setSpeed)}
         {slider('memory', memory, setMemory)}
         {slider('readability', readability, setReadability)}
       </div>
-      {err && <p className="mt-2 text-xs text-optred">{err}</p>}
-      <button onClick={apply} disabled={busy}
-        className="mt-3 bg-optgreen px-4 py-1 text-sm font-bold text-editordark disabled:opacity-50">
+      {err && <p className="error-text mt-2">{err}</p>}
+      <button onClick={apply} disabled={busy} className="btn btn-accent btn-sm mt-3">
         {busy ? 'Selecting…' : 'Apply tradeoff'}
       </button>
       {kind && (
-        <p className="mt-3 text-sm">
-          Selection: <span className="font-bold text-optgreen">{kind}</span>{' '}
-          <a className="underline" href={`/diff?sid=${sessionId}&variant=${kind}`}>
+        <p className="dial-result">
+          Selection: <strong>{kind}</strong>{' '}
+          <a href={`${BASE}/diff?sid=${sessionId}&variant=${kind}`}>
             View diff ({kind})
           </a>
         </p>
